@@ -1,3 +1,20 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* --- Screen-reader only utility --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Base --- */
 body {
   background-color: #111;
   color: #00ff00;
@@ -6,23 +23,193 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh; /* dynamic viewport height for mobile */
+  overflow: hidden;
 }
 
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* --- Terminal output area --- */
 .terminal {
   flex: 1;
   padding: 1rem;
   overflow-y: auto;
-  border-bottom: 2px solid #00ff00;
+  border-bottom: 1px solid #2a2a2a;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+
+/* --- Quote blocks --- */
+.quote-block {
+  margin-bottom: 0.85rem;
+}
+
+.quote-en {
+  color: #ffc600;
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  line-height: 1.4;
+}
+
+.quote-id {
+  color: #444;
+  font-size: 0.8em;
+  flex-shrink: 0;
+}
+
+.quote-es {
+  color: #777;
+  padding-left: 1.6rem;
+  margin-top: 0.15rem;
+  line-height: 1.4;
+}
+
+/* --- Favorite button --- */
+.fav-btn {
+  background: none;
+  border: none;
+  color: #ffc600;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s, transform 0.1s;
+}
+
+.fav-btn:hover {
+  color: #fff;
+  transform: scale(1.2);
+}
+
+.fav-btn:focus-visible {
+  outline: 2px solid #ffc600;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --- Input row --- */
+.input-row {
+  display: flex;
+  align-items: center;
+  background: #0d0d0d;
+  border-top: 1px solid #2a2a2a;
+}
+
+.prompt {
+  color: #00ff00;
+  padding: 0 0 0 1rem;
+  font-size: 1rem;
+  user-select: none;
 }
 
 #commandInput {
-  padding: 1rem;
+  flex: 1;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
   color: #00ff00;
-  background: black;
+  background: transparent;
   border: none;
   outline: none;
-  width: 100%;
-  box-sizing: border-box;
+  caret-color: #00ff00;
+  font-family: inherit;
+}
+
+#commandInput::placeholder {
+  color: #333;
+}
+
+.input-row:focus-within {
+  border-top-color: #00aa00;
+  background: #0f0f0f;
+}
+
+/* --- Quick-command buttons (mobile + desktop convenience) --- */
+.quick-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background: #0a0a0a;
+  border-top: 1px solid #1e1e1e;
+}
+
+.quick-btn {
+  background: #181818;
+  border: 1px solid #2e2e2e;
+  color: #00bb00;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 3px;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  user-select: none;
+}
+
+.quick-btn:hover {
+  background: #00ff00;
+  border-color: #00ff00;
+  color: #000;
+}
+
+.quick-btn:focus-visible {
+  outline: 2px solid #00ff00;
+  outline-offset: 2px;
+}
+
+.quick-btn:active {
+  transform: scale(0.96);
+}
+
+/* --- Mobile adjustments --- */
+@media (max-width: 600px) {
+  .terminal {
+    font-size: 0.82rem;
+    padding: 0.75rem;
+  }
+
+  #commandInput {
+    font-size: 0.9rem;
+  }
+
+  .quick-buttons {
+    padding: 0.4rem 0.75rem;
+    gap: 0.3rem;
+  }
+
+  .quick-btn {
+    font-size: 0.72rem;
+    padding: 0.28rem 0.55rem;
+  }
+
+  .quote-es {
+    padding-left: 1rem;
+  }
+}
+
+/* --- Scrollbar styling (Webkit) --- */
+.terminal::-webkit-scrollbar {
+  width: 4px;
+}
+
+.terminal::-webkit-scrollbar-track {
+  background: #111;
+}
+
+.terminal::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+.terminal::-webkit-scrollbar-thumb:hover {
+  background: #00aa00;
 }

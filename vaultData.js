@@ -1,4 +1,4 @@
-const quotes = [
+export const quotes = [
   // STOIC QUOTES (20)
   {
     id: 1,
@@ -574,3 +574,18 @@ const quotes = [
 { id: 99, category: "solarism", en: "A day aligned with your values is worth a hundred spent in confusion.", es: "Un día alineado con tus valores vale más que cien vividos en confusión." },
 { id: 100, category: "solarism", en: "You are not late, you are just early for a timeline only you can create.", es: "No llegas tarde, solo llegas temprano a una línea de tiempo que solo tú puedes crear." }
 ];
+
+export const quoteCategories = [...new Set(quotes.map(q => q.category))];
+
+export function getRandomQuotes(count = 5, category = null) {
+  const pool = category
+    ? quotes.filter(q => q.category.toLowerCase() === category.toLowerCase())
+    : quotes;
+  // Fisher-Yates shuffle on a copy (uniform distribution)
+  const arr = [...pool];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, Math.min(count, arr.length));
+}
