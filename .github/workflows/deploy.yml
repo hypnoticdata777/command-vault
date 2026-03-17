@@ -15,7 +15,7 @@ permissions:
 # Only one deployment runs at a time; cancel any in-progress run on new push
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   lint-and-deploy:
