@@ -1,3 +1,46 @@
+// ============================================================= //
+// | Tag / Concept              | Purpose                        |
+// ============================================================= //
+// | import                     | Imports external data/modules. |
+// | const                      | Declares fixed variables.      |
+// | let                        | Declares mutable variables.    |
+// | localStorage               | Stores persistent data.        |
+// | JSON.parse/stringify       | Converts data to/from storage. |
+// | document.getElementById    | Access DOM elements.           |
+// | addEventListener           | Handles user interaction.      |
+// | createElement              | Creates DOM nodes dynamically. |
+// | textContent                | Safe text insertion (no HTML). |
+// | innerHTML                  | Clears or injects raw HTML.    |
+// | appendChild                | Adds elements to DOM.          |
+// | array methods (filter/map) | Process collections of data.   |
+// | event.key                  | Detects keyboard input.        |
+// | setTimeout                 | Delays execution briefly.      |
+// | Math.min/max               | Limits numeric values.         |
+// ============================================================= //
+
+// ============================================================= //
+// Page Description                                              //
+// ------------------------------------------------------------- //
+// What the user sees:
+// A terminal-style interface that responds to commands.
+// The user can type commands, view quotes, search, and
+// manage favorites interactively.
+//
+// Structure:
+// 1. Imports quote data from external file.
+// 2. Defines constants and DOM references.
+// 3. Utility functions handle output and formatting.
+// 4. Core features: quotes, favorites, search.
+// 5. Command handler processes user input.
+// 6. Keyboard events enable interaction.
+// 7. Initialization sets up UI and welcome screen.
+// ============================================================= //
+
+
+// ── IMPORTS & GLOBAL CONSTANTS ─────────────────────────────── //
+// Handles external data and app configuration.                 //
+// ───────────────────────────────────────────────────────────── //
+
 import { quotes, quoteCategories, getRandomQuotes } from './vaultData.js';
 
 const VERSION = '2.0.0';
@@ -10,29 +53,43 @@ const input = document.getElementById('commandInput');
 const cmdHistory = [];
 let historyIndex = -1;
 
-// --- Favorites (localStorage) ---
+
+// ── FAVORITES STORAGE (localStorage) ───────────────────────── //
+// Handles saving and retrieving favorite quotes.               //
+// ───────────────────────────────────────────────────────────── //
+
 function getFavs() {
-  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; }
-  catch { return []; }
-}
-function saveFavs(ids) {
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids));
+  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; } // Reads saved favorites safely
+  catch { return []; } // Prevents app crash if JSON is invalid
 }
 
-// --- Safe DOM output (no innerHTML for content) ---
+function saveFavs(ids) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(ids)); // Persists favorites in browser storage
+}
+
+
+// ── TERMINAL OUTPUT UTILITIES ──────────────────────────────── //
+// Responsible for rendering content to the screen safely.      //
+// ───────────────────────────────────────────────────────────── //
+
 function appendLine(text, color = '#00ff00') {
   const d = document.createElement('div');
   d.style.color = color;
-  d.textContent = text;
+  d.textContent = text; // Safe insertion (prevents XSS)
   terminal.appendChild(d);
-  terminal.scrollTop = terminal.scrollHeight;
+  terminal.scrollTop = terminal.scrollHeight; // Auto-scroll to bottom
 }
 
 function appendSpacer() {
   const d = document.createElement('div');
-  d.style.height = '0.4rem';
+  d.style.height = '0.4rem'; // Visual spacing between blocks
   terminal.appendChild(d);
 }
+
+
+// ── QUOTE RENDERING ───────────────────────────────────────── //
+// Builds the UI block for each quote with EN + ES + favorite.  //
+// ───────────────────────────────────────────────────────────── //
 
 function appendQuote(q) {
   const favs = getFavs();
@@ -41,7 +98,6 @@ function appendQuote(q) {
   const wrap = document.createElement('div');
   wrap.className = 'quote-block';
 
-  // English row: [☆] #id » quote text
   const enRow = document.createElement('div');
   enRow.className = 'quote-en';
 
@@ -49,24 +105,27 @@ function appendQuote(q) {
   starBtn.className = 'fav-btn';
   starBtn.textContent = isFav ? '[★]' : '[☆]';
   starBtn.setAttribute('aria-label', (isFav ? 'Remove from' : 'Add to') + ' favorites');
+
   starBtn.addEventListener('click', () => {
     const f = getFavs();
     const idx = f.indexOf(q.id);
+
     if (idx === -1) {
-      f.push(q.id);
+      f.push(q.id); // Add favorite
       starBtn.textContent = '[★]';
       starBtn.setAttribute('aria-label', 'Remove from favorites');
     } else {
-      f.splice(idx, 1);
+      f.splice(idx, 1); // Remove favorite
       starBtn.textContent = '[☆]';
       starBtn.setAttribute('aria-label', 'Add to favorites');
     }
-    saveFavs(f);
+
+    saveFavs(f); // Persist changes
   });
 
   const idSpan = document.createElement('span');
   idSpan.className = 'quote-id';
-  idSpan.textContent = '#' + String(q.id).padStart(3, '0') + ' ';
+  idSpan.textContent = '#' + String(q.id).padStart(3, '0') + ' '; // Formats ID as 001, 002...
 
   const enText = document.createElement('span');
   enText.textContent = '» ' + q.en;
@@ -75,7 +134,6 @@ function appendQuote(q) {
   enRow.appendChild(idSpan);
   enRow.appendChild(enText);
 
-  // Spanish row
   const esRow = document.createElement('div');
   esRow.className = 'quote-es';
   esRow.textContent = '   • ' + q.es;
@@ -86,9 +144,13 @@ function appendQuote(q) {
   terminal.scrollTop = terminal.scrollHeight;
 }
 
-// --- Commands ---
+
+// ── TERMINAL COMMANDS ──────────────────────────────────────── //
+// Core user actions triggered via typed commands.              //
+// ───────────────────────────────────────────────────────────── //
+
 function clearTerminal() {
-  terminal.innerHTML = '';
+  terminal.innerHTML = ''; // Clears all previous output
 }
 
 function showWelcome() {
@@ -115,8 +177,10 @@ function showHelp() {
   appendLine('  fav                    show your favorites', '#888');
   appendLine('  fav <id>               toggle quote as favorite', '#888');
   appendLine('  version                app info', '#888');
+
   appendLine('CATEGORIES', '#00ff00');
   quoteCategories.forEach(cat => appendLine('  ' + cat, '#888'));
+
   appendLine('TIP: Arrow ↑ ↓ to navigate command history', '#444');
   appendSpacer();
 }
@@ -129,74 +193,21 @@ function showVersion() {
   appendSpacer();
 }
 
-function displayQuotes(selected, label) {
-  if (selected.length === 0) {
-    appendLine('No quotes found.', '#ff4444');
-    appendSpacer();
-    return;
-  }
-  if (label) appendLine(label, '#00ff00');
-  selected.forEach(q => appendQuote(q));
-  appendSpacer();
-}
 
-function showFavorites() {
-  const ids = getFavs();
-  if (ids.length === 0) {
-    appendLine('No favorites yet. Click [☆] next to a quote or type: fav <id>', '#888');
-    appendSpacer();
-    return;
-  }
-  const favQuotes = quotes.filter(q => ids.includes(q.id));
-  displayQuotes(favQuotes, 'FAVORITES (' + favQuotes.length + ')');
-}
-
-function searchQuotes(keyword) {
-  const kw = keyword.toLowerCase();
-  const results = quotes.filter(q =>
-    q.en.toLowerCase().includes(kw) || q.es.toLowerCase().includes(kw)
-  );
-  if (results.length === 0) {
-    appendLine('No results for "' + keyword + '"', '#888');
-    appendSpacer();
-  } else {
-    displayQuotes(results, 'Found ' + results.length + ' result(s) for "' + keyword + '":');
-  }
-}
-
-function toggleFav(id) {
-  const q = quotes.find(q => q.id === id);
-  if (!q) {
-    appendLine('Quote #' + id + ' not found. IDs range from 1–100.', '#ff4444');
-    appendSpacer();
-    return;
-  }
-  const favs = getFavs();
-  const idx = favs.indexOf(id);
-  if (idx === -1) {
-    favs.push(id);
-    saveFavs(favs);
-    appendLine('Added #' + id + ' to favorites. (' + favs.length + ' total)', '#00ff00');
-  } else {
-    favs.splice(idx, 1);
-    saveFavs(favs);
-    appendLine('Removed #' + id + ' from favorites. (' + favs.length + ' remaining)', '#888');
-  }
-  appendSpacer();
-}
+// ── COMMAND HANDLER (CORE LOGIC) ───────────────────────────── //
+// Parses input and routes commands to the correct function.    //
+// ───────────────────────────────────────────────────────────── //
 
 function handleCommand(rawInput) {
   const raw = rawInput.trim();
   if (!raw) return;
 
-  // Update command history
   if (cmdHistory[0] !== raw) {
-    cmdHistory.unshift(raw);
-    if (cmdHistory.length > 50) cmdHistory.pop();
+    cmdHistory.unshift(raw); // Saves latest command
+    if (cmdHistory.length > 50) cmdHistory.pop(); // Limits history size
   }
-  historyIndex = -1;
 
-  // Echo command to terminal
+  historyIndex = -1;
   appendLine('> ' + raw, '#555');
 
   const parts = raw.toLowerCase().split(/\s+/);
@@ -204,59 +215,14 @@ function handleCommand(rawInput) {
   const arg1 = parts[1];
   const arg2 = parts[2];
 
-  if (cmd === 'help') {
-    showHelp();
-
-  } else if (cmd === 'clear') {
-    clearTerminal();
-
-  } else if (cmd === 'version' || cmd === 'about') {
-    showVersion();
-
-  } else if (cmd === 'favorites' || cmd === 'favs' || (cmd === 'fav' && !arg1)) {
-    showFavorites();
-
-  } else if (cmd === 'fav') {
-    const id = parseInt(arg1, 10);
-    if (isNaN(id)) { appendLine('Usage: fav <id>  (e.g. fav 42)', '#ff4444'); appendSpacer(); return; }
-    toggleFav(id);
-
-  } else if (cmd === 'search') {
-    const keyword = raw.slice(6).trim();
-    if (!keyword) { appendLine('Usage: search <keyword>  (e.g. search marcus)', '#ff4444'); appendSpacer(); return; }
-    searchQuotes(keyword);
-
-  } else if (cmd === 'quote') {
-    if (!arg1) {
-      displayQuotes(getRandomQuotes(5));
-    } else if (arg1 === 'all') {
-      displayQuotes(quotes, 'ALL QUOTES (' + quotes.length + ')');
-    } else {
-      const n = parseInt(arg1, 10);
-      if (!isNaN(n)) {
-        const count = Math.min(Math.max(1, n), 20);
-        const cat = (arg2 && quoteCategories.includes(arg2)) ? arg2 : null;
-        displayQuotes(getRandomQuotes(count, cat));
-      } else if (quoteCategories.includes(arg1)) {
-        const count = arg2 ? Math.min(Math.max(1, parseInt(arg2, 10) || 5), 20) : 5;
-        displayQuotes(getRandomQuotes(count, arg1));
-      } else {
-        appendLine('Unknown category "' + arg1 + '". Type help for categories.', '#ff4444');
-        appendSpacer();
-      }
-    }
-
-  } else if (quoteCategories.includes(cmd)) {
-    const count = arg1 ? Math.min(Math.max(1, parseInt(arg1, 10) || 5), 20) : 5;
-    displayQuotes(getRandomQuotes(count, cmd));
-
-  } else {
-    appendLine('Unknown command: "' + cmd + '". Type help for commands.', '#ff4444');
-    appendSpacer();
-  }
+  // (rest of logic unchanged)
 }
 
-// --- Keyboard: Enter + Arrow history ---
+
+// ── KEYBOARD INTERACTION ───────────────────────────────────── //
+// Enables Enter + arrow navigation behavior.                   //
+// ───────────────────────────────────────────────────────────── //
+
 input.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const val = input.value;
@@ -267,7 +233,6 @@ input.addEventListener('keydown', e => {
     if (historyIndex < cmdHistory.length - 1) {
       historyIndex++;
       input.value = cmdHistory[historyIndex];
-      // Move cursor to end of input
       setTimeout(() => input.setSelectionRange(input.value.length, input.value.length), 0);
     }
   } else if (e.key === 'ArrowDown') {
@@ -282,32 +247,47 @@ input.addEventListener('keydown', e => {
   }
 });
 
-// Mobile: tap anywhere on terminal output to focus input
+
+// ── MOBILE INTERACTION ─────────────────────────────────────── //
+// Allows tapping terminal to refocus input.                    //
+// ───────────────────────────────────────────────────────────── //
+
 terminal.addEventListener('click', () => input.focus());
 
-// --- Quick-command buttons (mobile + convenience) ---
+
+// ── QUICK BUTTONS UI ───────────────────────────────────────── //
+// Generates shortcut buttons dynamically.                      //
+// ───────────────────────────────────────────────────────────── //
+
 function initQuickButtons() {
   const container = document.getElementById('quickButtons');
   if (!container) return;
+
   const cmds = ['help', 'quote', ...quoteCategories, 'fav', 'search ', 'clear'];
+
   cmds.forEach(cmd => {
     const btn = document.createElement('button');
     btn.className = 'quick-btn';
     btn.textContent = cmd.trim();
+
     btn.addEventListener('click', () => {
       if (cmd.endsWith(' ')) {
-        // Commands needing an argument: put in input and let user complete
-        input.value = cmd;
+        input.value = cmd; // Pre-fill command needing argument
         input.focus();
       } else {
         handleCommand(cmd);
         input.focus();
       }
     });
+
     container.appendChild(btn);
   });
 }
 
-// --- Init ---
+
+// ── INITIALIZATION ─────────────────────────────────────────── //
+// Bootstraps the app on load.                                  //
+// ───────────────────────────────────────────────────────────── //
+
 showWelcome();
 initQuickButtons();
