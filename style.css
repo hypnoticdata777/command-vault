@@ -1,6 +1,75 @@
+/* ============================================================= */
+/* | Tag / Concept              | Purpose                       | */
+/* ============================================================= */
+/* | *                          | Applies styles globally.      | */
+/* | *::before / *::after       | Includes pseudo-elements.     | */
+/* | box-sizing                 | Controls sizing calculation.  | */
+/* | .sr-only                   | Hides content visually only.  | */
+/* | position: absolute         | Removes element from flow.    | */
+/* | overflow: hidden           | Hides overflowed content.     | */
+/* | clip                       | Clips visible drawing area.   | */
+/* | white-space: nowrap        | Prevents line wrapping.       | */
+/* | body                       | Styles the full page.         | */
+/* | display: flex              | Enables flexible layout.      | */
+/* | flex-direction             | Sets item direction.          | */
+/* | height: 100dvh             | Uses dynamic viewport height. | */
+/* | main                       | Wraps main interface layout.  | */
+/* | .terminal                  | Styles terminal output area.  | */
+/* | overflow-y: auto           | Enables vertical scrolling.   | */
+/* | scroll-behavior: smooth    | Smooths scroll motion.        | */
+/* | overscroll-behavior        | Controls scroll chaining.     | */
+/* | .quote-block               | Wraps each quote visually.    | */
+/* | .quote-en                  | Styles English quote row.     | */
+/* | .quote-id                  | Styles quote ID label.        | */
+/* | .quote-es                  | Styles Spanish quote row.     | */
+/* | .fav-btn                   | Styles favorite button.       | */
+/* | :hover                     | Styles hover interaction.     | */
+/* | :focus-visible             | Styles visible keyboard focus.| */
+/* | .input-row                 | Wraps prompt and input.       | */
+/* | .prompt                    | Styles terminal prompt sign.  | */
+/* | #commandInput              | Styles command input field.   | */
+/* | ::placeholder              | Styles placeholder text.      | */
+/* | :focus-within              | Styles parent on child focus. | */
+/* | .quick-buttons             | Wraps quick command buttons.  | */
+/* | .quick-btn                 | Styles each quick button.     | */
+/* | :active                    | Styles button press feedback. | */
+/* | @media                     | Applies responsive rules.     | */
+/* | ::-webkit-scrollbar        | Styles custom scrollbar.      | */
+/* ============================================================= */
+
+/* ============================================================= */
+/* Page Description                                              */
+/* ------------------------------------------------------------- */
+/* What the user sees:                                           */
+/* A dark terminal-style interface with green text, a command    */
+/* input row, quote blocks, favorite buttons, and quick command  */
+/* buttons. The layout is designed to feel like a command-line   */
+/* vault while still working smoothly on mobile and desktop.     */
+/*                                                               */
+/* Structure:                                                    */
+/* 1. Global reset and accessibility utility classes.            */
+/* 2. Base page layout using flexbox.                            */
+/* 3. Terminal output area and quote styling.                    */
+/* 4. Favorite button interactions.                              */
+/* 5. Input row and command field styling.                       */
+/* 6. Quick command toolbar styling.                             */
+/* 7. Mobile adjustments with media query.                       */
+/* 8. Custom scrollbar styling for WebKit browsers.              */
+/* ============================================================= */
+
+
+/* ── GLOBAL RESET & BOX MODEL ───────────────────────────────── */
+/* Ensures sizing stays predictable across all elements.         */
+/* ───────────────────────────────────────────────────────────── */
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
+
+
+/* ── SCREEN READER UTILITY ──────────────────────────────────── */
+/* Keeps content accessible to screen readers but hidden visually. */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Screen-reader only utility --- */
 .sr-only {
@@ -9,10 +78,15 @@
   height: 1px;
   padding: 0;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
+  clip: rect(0, 0, 0, 0); /* Shrinks visible area to nothing without removing accessibility */
+  white-space: nowrap; /* Prevents line breaks from affecting hidden text */
   border: 0;
 }
+
+
+/* ── BASE PAGE LAYOUT ───────────────────────────────────────── */
+/* Defines the overall terminal look and page structure.         */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Base --- */
 body {
@@ -23,16 +97,21 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  height: 100dvh; /* dynamic viewport height for mobile */
-  overflow: hidden;
+  height: 100dvh; /* Uses dynamic viewport height for better mobile behavior */
+  overflow: hidden; /* Prevents the whole page from scrolling outside the app layout */
 }
 
 main {
   display: flex;
   flex-direction: column;
   flex: 1;
-  overflow: hidden;
+  overflow: hidden; /* Keeps scrolling inside the terminal area instead of the whole page */
 }
+
+
+/* ── TERMINAL OUTPUT AREA ───────────────────────────────────── */
+/* Styles the main scrolling space where command results appear. */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Terminal output area --- */
 .terminal {
@@ -40,9 +119,14 @@ main {
   padding: 1rem;
   overflow-y: auto;
   border-bottom: 1px solid #2a2a2a;
-  scroll-behavior: smooth;
-  overscroll-behavior: contain;
+  scroll-behavior: smooth; /* Makes output scrolling feel softer */
+  overscroll-behavior: contain; /* Prevents scroll chaining into the page on touch devices */
 }
+
+
+/* ── QUOTE BLOCKS ───────────────────────────────────────────── */
+/* Controls spacing and appearance for each rendered quote.      */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Quote blocks --- */
 .quote-block {
@@ -54,14 +138,14 @@ main {
   display: flex;
   align-items: baseline;
   gap: 0.3rem;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Allows long quotes to wrap cleanly on smaller screens */
   line-height: 1.4;
 }
 
 .quote-id {
   color: #444;
   font-size: 0.8em;
-  flex-shrink: 0;
+  flex-shrink: 0; /* Prevents the quote ID from collapsing in tight layouts */
 }
 
 .quote-es {
@@ -70,6 +154,11 @@ main {
   margin-top: 0.15rem;
   line-height: 1.4;
 }
+
+
+/* ── FAVORITE BUTTON ────────────────────────────────────────── */
+/* Styles the star button used to mark favorite quotes.          */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Favorite button --- */
 .fav-btn {
@@ -81,13 +170,13 @@ main {
   font-size: inherit;
   padding: 0;
   line-height: 1;
-  flex-shrink: 0;
-  transition: color 0.15s, transform 0.1s;
+  flex-shrink: 0; /* Keeps the button visible and stable in flex rows */
+  transition: color 0.15s, transform 0.1s; /* Adds quick visual feedback */
 }
 
 .fav-btn:hover {
   color: #fff;
-  transform: scale(1.2);
+  transform: scale(1.2); /* Slight enlargement helps the interaction feel alive */
 }
 
 .fav-btn:focus-visible {
@@ -95,6 +184,11 @@ main {
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+
+/* ── INPUT ROW ──────────────────────────────────────────────── */
+/* Styles the command line area where the user types commands.   */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Input row --- */
 .input-row {
@@ -108,7 +202,7 @@ main {
   color: #00ff00;
   padding: 0 0 0 1rem;
   font-size: 1rem;
-  user-select: none;
+  user-select: none; /* Prevents accidental text selection on the prompt symbol */
 }
 
 #commandInput {
@@ -119,7 +213,7 @@ main {
   background: transparent;
   border: none;
   outline: none;
-  caret-color: #00ff00;
+  caret-color: #00ff00; /* Keeps the text cursor aligned with the green terminal theme */
   font-family: inherit;
 }
 
@@ -129,8 +223,13 @@ main {
 
 .input-row:focus-within {
   border-top-color: #00aa00;
-  background: #0f0f0f;
+  background: #0f0f0f; /* Gives visual feedback when the input is active */
 }
+
+
+/* ── QUICK COMMAND BUTTONS ──────────────────────────────────── */
+/* Provides shortcut buttons for faster command access.          */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Quick-command buttons (mobile + desktop convenience) --- */
 .quick-buttons {
@@ -152,7 +251,7 @@ main {
   padding: 0.3rem 0.65rem;
   border-radius: 3px;
   transition: background 0.12s, border-color 0.12s, color 0.12s;
-  user-select: none;
+  user-select: none; /* Prevents accidental text highlighting during rapid tapping */
 }
 
 .quick-btn:hover {
@@ -167,8 +266,13 @@ main {
 }
 
 .quick-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.96); /* Slight press effect for tactile feedback */
 }
+
+
+/* ── MOBILE ADJUSTMENTS ─────────────────────────────────────── */
+/* Refines layout and sizing for smaller screens.                */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Mobile adjustments --- */
 @media (max-width: 600px) {
@@ -192,9 +296,14 @@ main {
   }
 
   .quote-es {
-    padding-left: 1rem;
+    padding-left: 1rem; /* Reduces indentation so the quote fits better on mobile */
   }
 }
+
+
+/* ── CUSTOM SCROLLBAR ───────────────────────────────────────── */
+/* Styles the terminal scrollbar in WebKit-based browsers.       */
+/* ───────────────────────────────────────────────────────────── */
 
 /* --- Scrollbar styling (Webkit) --- */
 .terminal::-webkit-scrollbar {
