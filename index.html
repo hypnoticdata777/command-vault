@@ -1,14 +1,74 @@
+<!-- ============================================================= -->
+<!-- | Tag / Concept                  | Purpose                  | -->
+<!-- ============================================================= -->
+<!-- | <!DOCTYPE html>                | Declares HTML5 document. | -->
+<!-- | <html lang="en">               | Root element in English. | -->
+<!-- | <head>                         | Stores page metadata.    | -->
+<!-- | <meta charset="UTF-8">         | Supports special chars.  | -->
+<!-- | <meta name="viewport"...>      | Makes layout responsive. | -->
+<!-- | <title>                        | Sets browser tab title.  | -->
+<!-- | <meta name="description"...>   | Describes page content.  | -->
+<!-- | <link rel="stylesheet"...>     | Connects external CSS.   | -->
+<!-- | <body>                         | Visible page content.    | -->
+<!-- | <main>                         | Main interface wrapper.  | -->
+<!-- | <div id="terminal">            | Shows terminal output.   | -->
+<!-- | class="terminal"               | Applies terminal styles. | -->
+<!-- | role="log"                     | Identifies live output.  | -->
+<!-- | aria-live="polite"             | Announces updates softly.| -->
+<!-- | aria-label                     | Improves accessibility.  | -->
+<!-- | <div class="input-row">        | Groups prompt + input.   | -->
+<!-- | <span class="prompt">          | Displays terminal arrow. | -->
+<!-- | aria-hidden="true"             | Hides decorative prompt. | -->
+<!-- | <label class="sr-only">        | Accessible hidden label. | -->
+<!-- | <input type="text">            | Receives user commands.  | -->
+<!-- | placeholder                    | Guides user interaction. | -->
+<!-- | autofocus                      | Focuses input on load.   | -->
+<!-- | autocomplete="off"             | Prevents saved entries.  | -->
+<!-- | autocorrect="off"              | Prevents text correction.| -->
+<!-- | autocapitalize="off"           | Prevents auto caps.      | -->
+<!-- | spellcheck="false"             | Prevents spell checking. | -->
+<!-- | <div id="quickButtons">        | Holds quick commands.    | -->
+<!-- | role="toolbar"                 | Defines button toolbar.  | -->
+<!-- | <script type="module">         | Loads modular JS file.   | -->
+<!-- ============================================================= -->
+
+<!-- ============================================================= -->
+<!-- Page Description                                              -->
+<!-- ------------------------------------------------------------- -->
+<!-- What the user sees:                                           -->
+<!-- A terminal-style interface where the user can type commands   -->
+<!-- and interact with a quote-based Command Vault experience.     -->
+<!-- There is also a quick command area for easier interaction.    -->
+<!--                                                               -->
+<!-- Structure:                                                    -->
+<!-- 1. The <head> contains metadata, title, description, and CSS. -->
+<!-- 2. The <body> contains the visible interface.                 -->
+<!-- 3. The <main> groups the full terminal experience.            -->
+<!-- 4. One <div> displays output, another groups the input line,  -->
+<!--    and another holds quick action buttons.                    -->
+<!-- 5. The JavaScript file powers the behavior of the interface.  -->
+<!-- ============================================================= -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Command Vault</title>
-  <meta name="description" content="100 curated quotes of wisdom in English and Spanish, delivered through a terminal-style interface.">
-  <link rel="stylesheet" href="style.css">
+  <!-- ── HEAD / PAGE CONFIGURATION ───────────────────────────── -->
+  <!-- Contains metadata, page title, SEO description, and CSS.  -->
+  <!-- ────────────────────────────────────────────────────────── -->
+
+  <meta charset="UTF-8"> <!-- Allows the page to display special characters correctly -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes the layout adapt to phones, tablets, and desktops -->
+  <title>Command Vault</title> <!-- Text shown in the browser tab -->
+  <meta name="description" content="100 curated quotes of wisdom in English and Spanish, delivered through a terminal-style interface."> <!-- Helps describe the page to search engines and previews -->
+  <link rel="stylesheet" href="style.css"> <!-- Connects the external stylesheet without mixing styles into HTML -->
 </head>
 <body>
+  <!-- ── MAIN INTERFACE ──────────────────────────────────────── -->
+  <!-- Wraps the full visible experience of the Command Vault.   -->
+  <!-- ────────────────────────────────────────────────────────── -->
+
   <main>
+    <!-- Terminal output area -->
     <div
       id="terminal"
       class="terminal"
@@ -16,9 +76,14 @@
       aria-live="polite"
       aria-label="Terminal output"
     ></div>
+
+    <!-- ── INPUT ROW ─────────────────────────────────────────── -->
+    <!-- Holds the prompt symbol and the command input field.    -->
+    <!-- ──────────────────────────────────────────────────────── -->
+
     <div class="input-row">
-      <span class="prompt" aria-hidden="true">&gt;</span>
-      <label for="commandInput" class="sr-only">Enter command</label>
+      <span class="prompt" aria-hidden="true">&gt;</span> <!-- Decorative prompt symbol, hidden from screen readers -->
+      <label for="commandInput" class="sr-only">Enter command</label> <!-- Hidden label improves accessibility for assistive tools -->
       <input
         type="text"
         id="commandInput"
@@ -31,6 +96,11 @@
         spellcheck="false"
       >
     </div>
+
+    <!-- ── QUICK COMMANDS TOOLBAR ────────────────────────────── -->
+    <!-- Area where JavaScript can inject shortcut buttons.      -->
+    <!-- ──────────────────────────────────────────────────────── -->
+
     <div
       id="quickButtons"
       class="quick-buttons"
@@ -38,6 +108,11 @@
       aria-label="Quick commands"
     ></div>
   </main>
+
+  <!-- ── SCRIPT CONNECTION ───────────────────────────────────── -->
+  <!-- Loads the JavaScript logic as a module for cleaner code.  -->
+  <!-- ────────────────────────────────────────────────────────── -->
+
   <script type="module" src="script.js"></script>
 </body>
 </html>
